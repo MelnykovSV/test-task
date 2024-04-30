@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Product {
+  sku       String    @id @unique
+  title     String
+  categories Category[]  
+  stocks  StockProduct[]
+
+}
+
+model Category {
+  slug      String    @id @unique
+  title     String
+  products   Product[]
+}
+
+model Stock {
+  uuid      String    @id @unique
+  title     String
+  products  StockProduct[]
+}
+
+model StockProduct {
+  id       Int      @id @default(autoincrement())
+  quantity Int
+  product  Product  @relation(fields: [productId], references: [sku])
+  productId String
+  stock    Stock    @relation(fields: [stockId], references: [uuid])
+  stockId  String
+}
