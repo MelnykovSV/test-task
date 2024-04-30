@@ -1,4 +1,7 @@
-// Інлайн стилі лише для того, щоб весь код завдання був в одному файлі, в іншому випадку викристовував би CSS модулі, CSS-in-JS або Tailwind
+import { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
+//Used inline styles for simplicity and to include all of the task's code in a single file
+
 const modalOverlayStyle = {
   backgroundColor: "rgba(0, 0, 0, 0.3)",
   position: "fixed",
@@ -18,10 +21,24 @@ const modalContentStyle = {
   transform: "translate(-50%, -50%)",
 };
 
-const Modal = ({ open, disableGlobalScroll, closeHandler, children }) => {
+// The closeHandler prop is necessary to close the modal either by clicking outside of it or by pressing the Escape key.
+
+export const Modal = ({
+  open,
+  disableGlobalScroll,
+  closeHandler,
+  children,
+}) => {
   const [modalOpen, setModalOpen] = useState(open);
   const ref = useRef(null);
-  const closeHandlerRef = useRef(closeHandler); //Використав цей підхід, щоб запобігти зайвим ререндерам через closeHandler в масиві залежностей
+  const closeHandlerRef = useRef(closeHandler); // Used this approach to prevent unnecessary re-renders caused by closeHandler being included in the useEffect's dependency array.
+
+  useEffect(() => {
+    setModalOpen(open);
+    if (disableGlobalScroll) {
+      document.body.style.overflow = open ? "hidden" : "auto";
+    }
+  }, [open, disableGlobalScroll]);
 
   useEffect(() => {
     function handleEscapeKey(event) {
@@ -35,25 +52,23 @@ const Modal = ({ open, disableGlobalScroll, closeHandler, children }) => {
     };
   }, [closeHandlerRef]);
 
-  useEffect(() => {
-    setModalOpen(open);
-    if (disableGlobalScroll) {
-      document.body.style.overflow = open ? "hidden" : "auto";
+  const outerClickHandler = (e) => {
+    if (ref.current === e.target) {
+      closeHandler();
     }
-  }, [open, disableGlobalScroll]);
+  };
 
   return (
     modalOpen &&
     ReactDOM.createPortal(
       <div
         style={modalOverlayStyle}
-        onClick={(e) => {
-          if (ref.current === e.target) {
-            closeHandler();
-          }
-        }}
-        ref={ref}>
-        <div style={modalContentStyle}>{children}</div>
+        onClick={outerClickHandler}
+        ref={ref}
+        aria-modal="true">
+        <div style={modalContentStyle} role="dialog">
+          {children}
+        </div>
       </div>,
       document.body
     )

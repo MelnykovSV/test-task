@@ -1,18 +1,6 @@
-function NotificationException() {}
-function ErrorException() {}
+// Recurcive version
 
-function primitiveMultiply(a, b) {
-  const rand = Math.random();
-  if (rand < 0.5) {
-    return a * b;
-  } else if (rand > 0.85) {
-    throw new ErrorException();
-  } else {
-    throw new NotificationException();
-  }
-}
-
-function reliableMultiply(a, b) {
+function reliableMultiplyRecursive(a, b) {
   try {
     const result = primitiveMultiply(a, b);
     return result;
@@ -21,6 +9,37 @@ function reliableMultiply(a, b) {
       return reliableMultiply(a, b);
     }
     return error;
+  }
+}
+
+// Cycle version. Better in case of very low probabilies of result and ErrorException, recursive version will exceed call stack in this case
+
+function reliableMultiply(a, b) {
+  while (true) {
+    try {
+      const result = primitiveMultiply(a, b);
+      return result;
+    } catch (error) {
+      if (error instanceof NotificationException) {
+        continue;
+      }
+      return error;
+    }
+  }
+}
+
+
+function NotificationException() {}
+function ErrorException() {}
+
+function primitiveMultiply(a, b) {
+  const rand = Math.random();
+  if (rand < 0.0000001) {
+    return a * b;
+  } else if (rand > 0.9999999) {
+    throw new ErrorException();
+  } else {
+    throw new NotificationException();
   }
 }
 

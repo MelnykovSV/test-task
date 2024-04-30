@@ -53,4 +53,4 @@ const mapRules = [
   ["age", "a"],
 ];
 
-testData3.map(mapper(mapRules)); // [{"n":"vasya","a":20},{"n":"dima","a":34},{"n":"colya","a":46},{"n":"misha","a":16},{"n":"ashan","a":99},{"n":"rafshan","a":11}]
+console.log(testData3.map(mapper(mapRules))); // [{"n":"vasya","a":20},{"n":"dima","a":34},{"n":"colya","a":46},{"n":"misha","a":16},{"n":"ashan","a":99},{"n":"rafshan","a":11}]
