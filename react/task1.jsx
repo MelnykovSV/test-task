@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 //Used inline styles for simplicity and to include all of the task's code in a single file
 
@@ -29,12 +29,9 @@ export const Modal = ({
   closeHandler,
   children,
 }) => {
-  const [modalOpen, setModalOpen] = useState(open);
   const ref = useRef(null);
-  const closeHandlerRef = useRef(closeHandler); // Used this approach to prevent unnecessary re-renders caused by closeHandler being included in the useEffect's dependency array.
 
   useEffect(() => {
-    setModalOpen(open);
     if (disableGlobalScroll) {
       document.body.style.overflow = open ? "hidden" : "auto";
     }
@@ -43,14 +40,14 @@ export const Modal = ({
   useEffect(() => {
     function handleEscapeKey(event) {
       if (event.code === "Escape") {
-        closeHandlerRef.current();
+        closeHandler();
       }
     }
     document.addEventListener("keydown", handleEscapeKey);
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [closeHandlerRef]);
+  }, [closeHandler]);
 
   const outerClickHandler = (e) => {
     if (ref.current === e.target) {
@@ -59,7 +56,7 @@ export const Modal = ({
   };
 
   return (
-    modalOpen &&
+    open &&
     ReactDOM.createPortal(
       <div
         style={modalOverlayStyle}
