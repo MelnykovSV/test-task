@@ -6,7 +6,7 @@ function reliableMultiplyRecursive(a, b) {
     return result;
   } catch (error) {
     if (error instanceof NotificationException) {
-      return reliableMultiply(a, b);
+      return reliableMultiplyRecursive(a, b);
     }
     return error;
   }
