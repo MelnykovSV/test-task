@@ -28,6 +28,7 @@ function reliableMultiply(a, b) {
   }
 }
 
+//================================================================================
 
 function NotificationException() {}
 function ErrorException() {}
